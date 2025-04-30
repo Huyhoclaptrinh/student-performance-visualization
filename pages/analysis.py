@@ -48,6 +48,11 @@ analysis_layout = html.Div([
         ),
         dcc.Graph(id="bar-gender"),
     ], className="graph-container"),
+
+    # Parental edu filter + box plot (DO HERE !!!!!!!)
+
+    # Heatmap subject selector + heatmap
+
 ])
 
 # Callback to switch tabs
@@ -105,6 +110,10 @@ def update_bar_chart(selected_gender):
         barmode="group", title="Average Exam Scores by Gender"
     )
     return fig
+
+# Callback: update box plot (DO HERE !!!!!!!)
+
+#  Callback: update heatmap
 
 # Run server
 if __name__ == "__main__":
