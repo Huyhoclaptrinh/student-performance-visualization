@@ -1,0 +1,11 @@
+name: students_dash
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip              # ensures we can install any pip‑only packages
+  - dash             # installs dash (which brings in dash-core-components, dash-html-components, etc.)
+  - plotly           # installs plotly (which includes plotly.express)
+  - pip:
+    - jupyterlab     # (optional—only if you’re running notebooks)
