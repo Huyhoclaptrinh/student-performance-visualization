@@ -50,10 +50,35 @@ analysis_layout = html.Div([
     ], className="graph-container"),
 
     # Parental edu filter + box plot (DO HERE !!!!!!!)
+    html.Div([
+        html.Label("Choose Parental Level of Education:"),
+        dcc.Dropdown(
+            id="parent-edu-dropdown",
+            options=[{"label": "All", "value": "ALL"}] + [
+                {"label": level, "value": level} for level in df["parental level of education"].unique()
+            ],
+            value="ALL"
+        ),
+        dcc.Graph(id="boxplot-parent-edu")
+    ], className="graph-container"),
 
     # Heatmap subject selector + heatmap
 
+    html.Div([
+        html.Label("Select Subject for Correlation Heatmap:"),
+        dcc.Dropdown(
+            id="heatmap-subject-dropdown",
+            options=[
+                {"label": "Math Score", "value": "math score"},
+                {"label": "Reading Score", "value": "reading score"},
+                {"label": "Writing Score", "value": "writing score"}
+            ],
+            value="math score"
+        ),
+        dcc.Graph(id="correlation-heatmap")
+    ], className="graph-container")
 ])
+
 
 # Callback to switch tabs
 @app.callback(
@@ -113,7 +138,56 @@ def update_bar_chart(selected_gender):
 
 # Callback: update box plot (DO HERE !!!!!!!)
 
+@app.callback(
+    Output("boxplot-parent-edu", "figure"),
+    Input("parent-edu-dropdown", "value")
+)
+def update_parent_edu_boxplot(selected_edu):
+    if selected_edu == "ALL":
+        filtered_df = df.copy()
+    else:
+        filtered_df = df[df["parental level of education"] == selected_edu]
+
+    melted_df = pd.melt(
+        filtered_df,
+        id_vars=["parental level of education"],
+        value_vars=["math score", "reading score", "writing score"],
+        var_name="subject",
+        value_name="score"
+    )
+
+    fig = px.box(
+        melted_df,
+        x="subject",
+        y="score",
+        title="Score Distribution by Subject (Based on Parental Education)",
+        points="all"
+    )
+    return fig
+
 #  Callback: update heatmap
+@app.callback(
+    Output("correlation-heatmap", "figure"),
+    Input("heatmap-subject-dropdown", "value")
+)
+def update_heatmap(selected_subject):
+    df_corr = df.copy()
+
+    df_corr["gender"] = df_corr["gender"].astype("category").cat.codes
+    df_corr["race/ethnicity"] = df_corr["race/ethnicity"].astype("category").cat.codes
+    df_corr["parental level of education"] = df_corr["parental level of education"].astype("category").cat.codes
+    df_corr["lunch"] = df_corr["lunch"].astype("category").cat.codes
+    df_corr["test preparation course"] = df_corr["test preparation course"].astype("category").cat.codes
+
+    correlations = df_corr.corr()[[selected_subject]].sort_values(by=selected_subject, ascending=False)
+
+    fig = px.imshow(
+        correlations,
+        text_auto=True,
+        color_continuous_scale="RdBu_r",
+        title=f"Correlation with {selected_subject.title()}"
+    )
+    return fig
 
 # Run server
 if __name__ == "__main__":
