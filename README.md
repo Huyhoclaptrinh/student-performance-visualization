@@ -58,6 +58,14 @@ conda env create -f environment.yml
 conda activate students_dash
 ```
 
+### Using pip (Alternative)
+
+If you prefer pip, install from `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Running the Dashboard
 
 1. Ensure the cleaned data is available:
