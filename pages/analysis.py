@@ -161,7 +161,7 @@ def update_parent_edu_boxplot(selected_edu):
         x="subject",
         y="score",
         title="Score Distribution by Subject (Based on Parental Education)",
-        points="all"
+        # points="all"
     )
     return fig
 
@@ -179,7 +179,11 @@ def update_heatmap(selected_subject):
     df_corr["lunch"] = df_corr["lunch"].astype("category").cat.codes
     df_corr["test preparation course"] = df_corr["test preparation course"].astype("category").cat.codes
 
-    correlations = df_corr.corr()[[selected_subject]].sort_values(by=selected_subject, ascending=False)
+    # print(selected_subject)
+
+    numeric_df = df_corr.select_dtypes(include=['float', 'int'])
+
+    correlations = numeric_df.corr()[[selected_subject]].sort_values(by=selected_subject, ascending=False)
 
     fig = px.imshow(
         correlations,
